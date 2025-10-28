@@ -1,6 +1,6 @@
 # Converter
 
-`@pdfme/converter` can be used in both Node.js and in the browser.  
+`@stupremee/converter` can be used in both Node.js and in the browser.  
 
 Its primary purpose is to convert PDFs into other formats (like images) or to convert various data formats (like Markdown) into PDFs.
 
@@ -17,7 +17,7 @@ Planned conversion features include:
 ## Installation
 
 ```bash
-npm install @pdfme/converter
+npm install @stupremee/converter
 ```
 
 If you want to convert PDFs to images (`pdf2img`) in Node.js, you’ll need [node-canvas](https://github.com/Automattic/node-canvas) (^2.11.2), which requires an additional step:
@@ -32,7 +32,7 @@ npm install canvas@^2.11.2
 Converts PDF pages into images (JPEG or PNG format).
 
 ```ts
-import { pdf2img } from '@pdfme/converter';
+import { pdf2img } from '@stupremee/converter';
 
 const pdf = new ArrayBuffer(...); // Source PDF
 const images = await pdf2img(pdf, {
@@ -46,7 +46,7 @@ const images = await pdf2img(pdf, {
 Retrieves the width and height of each page in a PDF.
 
 ```ts
-import { pdf2size } from '@pdfme/converter';
+import { pdf2size } from '@stupremee/converter';
 
 const pdf = new ArrayBuffer(...); // Source PDF
 const sizes = await pdf2size(pdf, {
@@ -59,7 +59,7 @@ const sizes = await pdf2size(pdf, {
 Converts one or more images (JPEG or PNG) into a single PDF file.
 
 ```ts
-import { img2pdf } from '@pdfme/converter';
+import { img2pdf } from '@stupremee/converter';
 
 const image1 = new ArrayBuffer(...); // First image
 const image2 = new ArrayBuffer(...); // Second image
@@ -75,11 +75,11 @@ const pdf = await img2pdf([image1, image2], {
 
 All functions throw descriptive errors when invalid parameters are provided:
 
-- Invalid PDF: `[@pdfme/converter] Invalid PDF`
-- Empty PDF: `[@pdfme/converter] The PDF file is empty`
-- Invalid page range: `[@pdfme/converter] Invalid page range`
-- Empty image array: `[@pdfme/converter] Input must be a non-empty array of image buffers`
-- Invalid image: `[@pdfme/converter] Failed to process image`
+- Invalid PDF: `[@stupremee/converter] Invalid PDF`
+- Empty PDF: `[@stupremee/converter] The PDF file is empty`
+- Invalid page range: `[@stupremee/converter] Invalid page range`
+- Empty image array: `[@stupremee/converter] Input must be a non-empty array of image buffers`
+- Invalid image: `[@stupremee/converter] Failed to process image`
 
 ## Types
 
@@ -111,7 +111,7 @@ interface Img2PdfOptions {
 
 ## Contact
 
-If you have any questions or suggestions about `@pdfme/converter`, please reach out via:
+If you have any questions or suggestions about `@stupremee/converter`, please reach out via:
 
 - **Discord**: [https://discord.gg/xWPTJbmgNV](https://discord.gg/xWPTJbmgNV)
 - **GitHub Issues**: [https://github.com/pdfme/pdfme/issues](https://github.com/pdfme/pdfme/issues)

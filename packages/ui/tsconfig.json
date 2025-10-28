@@ -26,10 +26,10 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@pdfme/common": [
+      "@stupremee/common": [
         "packages/common/dist/esm/src"
       ],
-      "@pdfme/schemas": [
+      "@stupremee/schemas": [
         "packages/schemas/dist/esm/src"
       ]
     },

@@ -1,6 +1,6 @@
-import { ZOOM, Plugin, Schema } from '@pdfme/common';
+import { ZOOM, Plugin, Schema } from '@stupremee/common';
 import SignaturePad from 'signature_pad';
-import { image } from '@pdfme/schemas';
+import { image } from '@stupremee/schemas';
 
 interface Signature extends Schema {}
 

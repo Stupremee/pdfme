@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from 'react-toastify';
-import { Template, checkTemplate, getInputFromTemplate, Lang } from "@pdfme/common";
-import { Form, Viewer } from "@pdfme/ui";
+import { Template, checkTemplate, getInputFromTemplate, Lang } from "@stupremee/common";
+import { Form, Viewer } from "@stupremee/ui";
 import {
   getFontsData,
   getTemplateById,

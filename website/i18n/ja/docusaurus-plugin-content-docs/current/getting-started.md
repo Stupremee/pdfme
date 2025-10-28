@@ -20,28 +20,28 @@ pdfmeには、generatorとUIの2つのパッケージがあります。
 PDFを生成するためのパッケージは、以下のコマンドでインストールできます。
 
 ```
-npm i @pdfme/generator @pdfme/common
+npm i @stupremee/generator @stupremee/common
 ```
 
 PDFデザイナー、フォーム、ビューワーを使用するためのパッケージは、以下のコマンドでインストールできます。
 
 ```
-npm i @pdfme/ui @pdfme/common
+npm i @stupremee/ui @stupremee/common
 ```
 
-\*どのパッケージを使用する場合でも、`@pdfme/common`をインストールする必要があります。
+\*どのパッケージを使用する場合でも、`@stupremee/common`をインストールする必要があります。
 
 pdfmeでは以下の型、関数、クラスが利用可能です。
 
-`@pdfme/common`
+`@stupremee/common`
 
 - [Template](/docs/getting-started#template)
 
-`@pdfme/generator`
+`@stupremee/generator`
 
 - [generate](/docs/getting-started#generator)
 
-`@pdfme/ui`
+`@stupremee/ui`
 
 - [Designer](/docs/getting-started#designer)
 - [Form](/docs/getting-started#form)
@@ -50,13 +50,13 @@ pdfmeでは以下の型、関数、クラスが利用可能です。
 環境がwebpackを使用している場合は、以下のように必要なアイテムをインポートします。
 
 ```ts
-import type { Template } from '@pdfme/common';
-import { generate } from '@pdfme/generator';
+import type { Template } from '@stupremee/common';
+import { generate } from '@stupremee/generator';
 ```
 
 ```ts
-import type { Template } from '@pdfme/common';
-import { Designer, Form, Viewer } from '@pdfme/ui';
+import type { Template } from '@stupremee/common';
+import { Designer, Form, Viewer } from '@stupremee/ui';
 ```
 
 **すべてのオブジェクトは`Template`を使用しており、これについては次のセクションで簡単に説明します。**
@@ -64,7 +64,7 @@ import { Designer, Form, Viewer } from '@pdfme/ui';
 ## テンプレート
 
 pdfmeライブラリの中核はテンプレートです。  
-テンプレート型は`@pdfme/generator`または`@pdfme/ui`の両方からインポートできます。テンプレートはあらゆる場所で使用されます。
+テンプレート型は`@stupremee/generator`または`@stupremee/ui`の両方からインポートできます。テンプレートはあらゆる場所で使用されます。
 
 テンプレートは、固定部分と可変部分の2つに分けることができます。  
 これらをbasePdfとschemaと呼びます。
@@ -82,7 +82,7 @@ basePdf: { "width": 210, "height": 297, "padding": [10, 10, 10, 10] }
 ```
 
 
-**schemas**はデフォルトではテキストのみ使用できますが、`@pdfme/schemas`パッケージからプラグインとして画像やQRコードなどの様々なバーコードを読み込むことができます。  
+**schemas**はデフォルトではテキストのみ使用できますが、`@stupremee/schemas`パッケージからプラグインとして画像やQRコードなどの様々なバーコードを読み込むことができます。  
 さらに、独自のスキーマを作成することで、上記以外の種類をレンダリングすることも可能です。  
 詳細は[カスタムスキーマ](/docs/custom-schemas)をご覧ください。
 
@@ -92,7 +92,7 @@ basePdf: { "width": 210, "height": 297, "padding": [10, 10, 10, 10] }
 ### 最小限のテンプレート
 
 ```ts
-import { Template, BLANK_PDF } from '@pdfme/common';
+import { Template, BLANK_PDF } from '@stupremee/common';
 
 const template: Template = {
   basePdf: BLANK_PDF,
@@ -128,14 +128,14 @@ const template: Template = {
 
 ### プラグインの使用
 
-デフォルトでは、例は多くの場合`text`スキーマタイプの使用を示しています。ただし、他の組み込みスキーマタイプを使用したり、`@pdfme/schemas`パッケージで独自のカスタムスキーマを作成したりすることもできます。
+デフォルトでは、例は多くの場合`text`スキーマタイプの使用を示しています。ただし、他の組み込みスキーマタイプを使用したり、`@stupremee/schemas`パッケージで独自のカスタムスキーマを作成したりすることもできます。
 
-#### ステップ1: `@pdfme/schemas`のインストール
+#### ステップ1: `@stupremee/schemas`のインストール
 
 追加のスキーマタイプにアクセスするために必要なパッケージをインストールします。
 
 ```bash
-npm install @pdfme/schemas
+npm install @stupremee/schemas
 ```
 
 #### ステップ2: 組み込みおよびカスタムスキーマタイプの使用
@@ -143,8 +143,8 @@ npm install @pdfme/schemas
 以下は、組み込みとカスタムの両方のスキーマタイプを使用したテンプレートの例です：
 
 ```ts
-import { Template, BLANK_PDF } from '@pdfme/common';
-import { text, barcodes, image } from '@pdfme/schemas';
+import { Template, BLANK_PDF } from '@stupremee/common';
+import { text, barcodes, image } from '@stupremee/schemas';
 import myCustomPlugin from './custom-plugins';
 
 const template: Template = {
@@ -211,8 +211,8 @@ PDF生成関数`generate`は、PDFを生成するために`template`と`inputs`�
 [上記で作成したテンプレート](/docs/getting-started#minimal-template)を使用してPDFファイルを生成するコードを以下に示します。
 
 ```ts
-import type { Template } from '@pdfme/common';
-import { generate } from '@pdfme/generator';
+import type { Template } from '@stupremee/common';
+import { generate } from '@stupremee/generator';
 
 const template: Template = {
   // 省略...　テンプレートセクションを確認してください。
@@ -250,8 +250,8 @@ UIは[デザイナー](/docs/getting-started#designer)、[フォーム](/docs/ge
 上記で作成したテンプレートをデフォルトテンプレートとして使用し、デザイナーを統合してみましょう。
 
 ```ts
-import type { Template } from '@pdfme/common';
-import { Designer } from '@pdfme/ui';
+import type { Template } from '@stupremee/common';
+import { Designer } from '@stupremee/ui';
 
 const domContainer = document.getElementById('container');
 const template: Template = {
@@ -296,8 +296,8 @@ const designer = new Designer({ domContainer, template, options });
 [こちら](/template-design?ui=form-viewer&template=invoice)から請求書テンプレートを使用したフォームを試すことができます。
 
 ```ts
-import type { Template } from '@pdfme/common';
-import { Form } from '@pdfme/ui';
+import type { Template } from '@stupremee/common';
+import { Form } from '@stupremee/ui';
 
 const domContainer = document.getElementById('container');
 const template: Template = {
@@ -331,8 +331,8 @@ generate({ template, inputs: form.getInputs() }).then((pdf) => {
 ビューワーの使用は基本的にフォームの使用と同じですが、ユーザーが編集できない点が異なります。
 
 ```ts
-import type { Template } from '@pdfme/common';
-import { Viewer } from '@pdfme/ui';
+import type { Template } from '@stupremee/common';
+import { Viewer } from '@stupremee/ui';
 
 const domContainer = document.getElementById('container');
 const template: Template = {

@@ -43,7 +43,7 @@
         "width": 90.21,
         "height": 19.08,
         "fontSize": 12,
-        "content": "+123-456-7890\nhello@pdfme.com"
+        "content": "+123-456-7890\nhello@stupremee.com"
       },
       "PaymentMethod": {
         "type": "text",
@@ -404,7 +404,7 @@
         "fontSize": 13,
         "characterSpacing": 0,
         "lineHeight": 1,
-        "content": "+123-456-7890\nhello@pdfme.com\n123 Anywhere St., Any City, ST 12345"
+        "content": "+123-456-7890\nhello@stupremee.com\n123 Anywhere St., Any City, ST 12345"
       },
       "Total": {
         "type": "text",

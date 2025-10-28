@@ -8,10 +8,10 @@ pdfmeはデフォルトで[Roboto Regular 400](https://fonts.google.com/specimen
 
 ## フォントタイプについて
 
-以下のように`@pdfme/common`からインポートできます。
+以下のように`@stupremee/common`からインポートできます。
 
 ```ts
-import type { Font } from '@pdfme/common';
+import type { Font } from '@stupremee/common';
 ```
 
 フォントの型は以下の通りです。
@@ -50,8 +50,8 @@ const font: Font = {
 [generate](/docs/getting-started#generator)関数のオプションとしてフォントを設定します。
 
 ```ts
-import { Template, BLANK_PDF, Font } from '@pdfme/common';
-import { generate } from '@pdfme/generator';
+import { Template, BLANK_PDF, Font } from '@stupremee/common';
+import { generate } from '@stupremee/generator';
 
 const font: Font = {
   serif: {
@@ -115,7 +115,7 @@ UIでフォントを設定する方法は2つあります。インスタンス�
 #### インスタンス初期化時にフォントを設定
 
 ```ts
-import { Designer } from '@pdfme/ui';
+import { Designer } from '@stupremee/ui';
 
 const domContainer = document.getElementById('container');
 const template = {

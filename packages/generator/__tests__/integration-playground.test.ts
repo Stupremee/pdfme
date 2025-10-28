@@ -1,6 +1,6 @@
 import generate from '../src/generate.js';
-import { Template } from '@pdfme/common';
-import { getInputFromTemplate } from '@pdfme/common';
+import { Template } from '@stupremee/common';
+import { getInputFromTemplate } from '@stupremee/common';
 import {
   text,
   image,
@@ -11,7 +11,7 @@ import {
   barcodes,
   table,
   multiVariableText,
-} from '@pdfme/schemas';
+} from '@stupremee/schemas';
 import { getFont, pdfToImages } from './utils.js';
 import * as fs from 'fs';
 import * as path from 'path';

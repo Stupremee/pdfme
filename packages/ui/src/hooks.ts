@@ -9,8 +9,8 @@ import {
   SchemaForUI,
   ChangeSchemas,
   isBlankPdf,
-} from '@pdfme/common';
-import { pdf2img, pdf2size } from '@pdfme/converter';
+} from '@stupremee/common';
+import { pdf2img, pdf2size } from '@stupremee/converter';
 
 import {
   schemasList2template,
@@ -102,7 +102,7 @@ export const useUIPreProcessor = ({ template, size, zoomLevel, maxZoom }: UIPreP
       })
       .catch((err: Error) => {
         setError(err);
-        console.error('[@pdfme/ui]', err);
+        console.error('[@stupremee/ui]', err);
       });
   }, [template, size]);
 

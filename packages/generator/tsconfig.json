@@ -4,13 +4,13 @@
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "@pdfme/common": [
+      "@stupremee/common": [
         "packages/common/dist/esm/src"
       ],
-      "@pdfme/schemas": [
+      "@stupremee/schemas": [
         "packages/schemas/dist/esm/src"
       ],
-      "@pdfme/schemas/utils": [
+      "@stupremee/schemas/utils": [
         "packages/schemas/dist/esm/src/utils"
       ]
     }

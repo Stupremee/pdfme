@@ -1,4 +1,4 @@
-import { getDefaultFont, UIRenderProps } from '@pdfme/common';
+import { getDefaultFont, UIRenderProps } from '@stupremee/common';
 import { MultiVariableTextSchema } from './types.js';
 import {
   uiRender as parentUiRender,

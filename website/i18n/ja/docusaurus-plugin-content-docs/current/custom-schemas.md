@@ -1,29 +1,29 @@
 # カスタムスキーマ（プラグイン）
 
 デフォルトでは、pdfmeはテキストスキーマを使用できます。しかし、画像やQRコードのスキーマを利用したいユーザーもいるでしょう。
-これらは`@pdfme/schemas`パッケージからプラグインとして読み込むことができます。
+これらは`@stupremee/schemas`パッケージからプラグインとして読み込むことができます。
 
 また、独自のスキーマを作成し、同様にプラグインとして読み込むこともできます。
-このページでは、`@pdfme/schemas`からスキーマを使用する方法と、独自のスキーマを作成する方法について説明します。
+このページでは、`@stupremee/schemas`からスキーマを使用する方法と、独自のスキーマを作成する方法について説明します。
 
-## @pdfme/schemasからのスキーマの使用
+## @stupremee/schemasからのスキーマの使用
 
-ここでは、`@pdfme/schemas`から画像とQRコードのスキーマをインポートする方法を説明します。
+ここでは、`@stupremee/schemas`から画像とQRコードのスキーマをインポートする方法を説明します。
 
-まず、`@pdfme/schemas`をインストールします。
+まず、`@stupremee/schemas`をインストールします。
 
 ```bash
-npm install @pdfme/schemas
+npm install @stupremee/schemas
 ```
 
-次に、必要なスキーマを`@pdfme/schemas`から`@pdfme/generator`と`@pdfme/ui`にインポートします。
+次に、必要なスキーマを`@stupremee/schemas`から`@stupremee/generator`と`@pdfme/ui`にインポートします。
 
-以下のコードは、`@pdfme/generator`と`@pdfme/ui`からQRコードと画像のスキーマをインポートする例を示しています。
+以下のコードは、`@stupremee/generator`と`@stupremee/ui`からQRコードと画像のスキーマをインポートする例を示しています。
 
 ```ts
-import type { Template } from '@pdfme/common';
-import { text, image, barcodes } from '@pdfme/schemas';
-import { generate } from '@pdfme/generator';
+import type { Template } from '@stupremee/common';
+import { text, image, barcodes } from '@stupremee/schemas';
+import { generate } from '@stupremee/generator';
 
 const template: Template = {
   // 省略... テンプレートでtext、image、qrcodeスキーマタイプを使用できます。
@@ -44,12 +44,12 @@ const pdf = await generate({
 });
 ```
 
-この`@pdfme/ui`の例では、Designerを使用していますが、FormとViewerでも同じ方法でプラグインを読み込むことができます。
+この`@stupremee/ui`の例では、Designerを使用していますが、FormとViewerでも同じ方法でプラグインを読み込むことができます。
 
 ```ts
-import type { Template } from '@pdfme/common';
-import { text, image, barcodes } from '@pdfme/schemas';
-import { Designer } from '@pdfme/ui';
+import type { Template } from '@stupremee/common';
+import { text, image, barcodes } from '@stupremee/schemas';
+import { Designer } from '@stupremee/ui';
 
 const domContainer = document.getElementById('container');
 const template: Template = {
@@ -99,12 +99,12 @@ pdfmeはオープンソースとして開発されているため、誰もがス
 
 **プラグイン**の構造と動作方法について説明します。
 
-- **pdf**: `@pdfme/generator`で使用され、スキーマをPDFにレンダリングするためのコードが含まれています。PDFレンダリングプロセスは[pdf-lib](https://pdf-lib.js.org/)によって処理されます。
-- **ui**: `@pdfme/ui`で使用され、スキーマをDOMにレンダリングするためのコードが含まれています。uiには以下のモードがあります：
+- **pdf**: `@stupremee/generator`で使用され、スキーマをPDFにレンダリングするためのコードが含まれています。PDFレンダリングプロセスは[pdf-lib](https://pdf-lib.js.org/)によって処理されます。
+- **ui**: `@stupremee/ui`で使用され、スキーマをDOMにレンダリングするためのコードが含まれています。uiには以下のモードがあります：
   - **viewer**: [Viewer](/docs/getting-started#viewer)、[Designer](/docs/getting-started#designer)（フィールドが選択されていない場合）で使用されます。PDFのレンダリングと外観に合わせてプレビューとして機能します。
   - **form**: [Form](/docs/getting-started#form)で使用されます。ユーザーが入力できるフォームとして機能します。
   - **designer**: [Designer](/docs/getting-started#designer)（フィールドがダブルクリックされた場合）で使用されます。基本的にはフォームと同じですが、ユーザーが入力できるWYSIWYGエディタとして機能します。textareaやinput要素の場合、フォーカスが必要です。
-- **propPanel**: `@pdfme/ui`の[Designer](/docs/getting-started#designer)で使用され、フィールドが選択されたときにサイドバーにカスタムプロパティ編集フォームを追加できます。[form-render](https://xrender.fun/form-render)のJSON形式を使用して入力できます（ウィジェット拡張も可能）。
+- **propPanel**: `@stupremee/ui`の[Designer](/docs/getting-started#designer)で使用され、フィールドが選択されたときにサイドバーにカスタムプロパティ編集フォームを追加できます。[form-render](https://xrender.fun/form-render)のJSON形式を使用して入力できます（ウィジェット拡張も可能）。
 
 :::note
 pdfmeは[pdf-lib](https://pdf-lib.js.org/)と[form-render](https://xrender.fun/form-render)に依存しています。  
@@ -121,9 +121,9 @@ pdfmeは[pdf-lib](https://pdf-lib.js.org/)と[form-render](https://xrender.fun/f
 - **ui(mode: designer), ui(mode: viewer), propPanel**
   ![](/img/plugin-designer.png)
 
-### @pdfme/schemasのコードから学ぶ作成方法
+### @stupremee/schemasのコードから学ぶ作成方法
 
-独自のスキーマを作成する場合は、`@pdfme/schemas`内の既存のコードを参照することをお勧めします。  
+独自のスキーマを作成する場合は、`@stupremee/schemas`内の既存のコードを参照することをお勧めします。  
 既存のスキーマのコードは以下のファイルにあります：
 
 - [packages/schemas/src/text/index.ts](https://github.com/pdfme/pdfme/tree/main/packages/schemas/src/text/index.ts): PDFレンダリングの観点から最も複雑なスキーマです。propPanelも[form-renderのWidget](https://xrender.fun/form-render/advanced-widget)を使用してカスタマイズされており、プラグインが複雑なニーズに対応できることを示しています。

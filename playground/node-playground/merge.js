@@ -1,4 +1,4 @@
-const { merge } = require('@pdfme/manipulator');
+const { merge } = require('@stupremee/manipulator');
 const fs = require('fs');
 const path = require('path');
 

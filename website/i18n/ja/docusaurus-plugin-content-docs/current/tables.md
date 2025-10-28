@@ -7,15 +7,15 @@
 
 ## テーブルスキーマの使用方法
 
-テーブルスキーマは`@pdfme/schemas`パッケージに含まれており、`table`としてエクスポートされています。  
-以下のコードを使用して、テーブルスキーマを`@pdfme/ui`と`@pdfme/generator`のプラグインとして追加できます。
+テーブルスキーマは`@stupremee/schemas`パッケージに含まれており、`table`としてエクスポートされています。  
+以下のコードを使用して、テーブルスキーマを`@stupremee/ui`と`@stupremee/generator`のプラグインとして追加できます。
 
 ページ区切りをサポートするには、テンプレートの`basePdf`プロパティを`{ width: number, height: number, padding: [number,number,number,number] }`に設定してください。
 
 ```javascript
-import { table } from '@pdfme/schemas';
-import { Designer } from '@pdfme/ui';
-import { generate } from '@pdfme/generator';
+import { table } from '@stupremee/schemas';
+import { Designer } from '@stupremee/ui';
+import { generate } from '@stupremee/generator';
 
 new Designer({
   domContainer,

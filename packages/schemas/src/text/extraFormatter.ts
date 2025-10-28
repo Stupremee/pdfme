@@ -1,4 +1,4 @@
-// No imports needed from @pdfme/common
+// No imports needed from @stupremee/common
 import {
   TextAlignCenterIcon,
   TextAlignLeftIcon,

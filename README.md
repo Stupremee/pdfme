@@ -17,11 +17,11 @@
   <a href="https://deepwiki.com/pdfme/pdfme">
     <img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki">
   </a>
-  <a href="https://www.npmjs.com/package/@pdfme/generator">
-    <img src="https://img.shields.io/npm/v/@pdfme/generator.svg" alt="Current npm package version." />
+  <a href="https://www.npmjs.com/package/@stupremee/generator">
+    <img src="https://img.shields.io/npm/v/@stupremee/generator.svg" alt="Current npm package version." />
   </a>
-  <a href="https://npmcharts.com/compare/@pdfme/common?minimal=true">
-    <img src="https://img.shields.io/npm/dm/@pdfme/common.svg" alt="Downloads per month on npm." />
+  <a href="https://npmcharts.com/compare/@stupremee/common?minimal=true">
+    <img src="https://img.shields.io/npm/dm/@stupremee/common.svg" alt="Downloads per month on npm." />
   </a>
   <a href="https://flatt.tech/oss/gmo/trampoline" target="_blank">
     <img src="https://flatt.tech/assets/images/badges/gmo-oss.svg" height="20px"/>

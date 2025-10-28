@@ -8,10 +8,10 @@ done
 
 for dir in generator ui; do
     cd "$dir"
-    npm link @pdfme/common
-    npm link @pdfme/schemas
+    npm link @stupremee/common
+    npm link @stupremee/schemas
     if [ "$dir" = "ui" ]; then
-        npm link @pdfme/converter
+        npm link @stupremee/converter
     fi
     cd ..
 done

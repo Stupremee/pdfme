@@ -1,6 +1,6 @@
 import { Space, Button, Form } from 'antd';
 import React from 'react';
-import type { PropPanelWidgetProps } from '@pdfme/common';
+import type { PropPanelWidgetProps } from '@stupremee/common';
 import {
   AlignStartVertical,
   AlignStartHorizontal,

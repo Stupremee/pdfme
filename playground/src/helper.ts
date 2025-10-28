@@ -1,6 +1,6 @@
-import { Template, Font, checkTemplate, getInputFromTemplate, getDefaultFont } from '@pdfme/common';
-import { Form, Viewer, Designer } from '@pdfme/ui';
-import { generate } from '@pdfme/generator';
+import { Template, Font, checkTemplate, getInputFromTemplate, getDefaultFont } from '@stupremee/common';
+import { Form, Viewer, Designer } from '@stupremee/ui';
+import { generate } from '@stupremee/generator';
 import { getPlugins } from './plugins';
 
 export function fromKebabCase(str: string): string {

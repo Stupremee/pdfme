@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { PreviewProps } from '@pdfme/common';
+import { PreviewProps } from '@stupremee/common';
 import { PreviewUI } from './class.js';
 import { DESTROYED_ERR_MSG } from './constants.js';
 import Preview from './components/Preview.js';
@@ -10,7 +10,7 @@ class Viewer extends PreviewUI {
   constructor(props: PreviewProps) {
     super(props);
     console.warn(
-      '[@pdfme/ui] Viewer component is deprecated and will be removed in a future version.',
+      '[@stupremee/ui] Viewer component is deprecated and will be removed in a future version.',
     );
   }
 
