@@ -204,7 +204,7 @@ const runnersToPage = (
   options: PDFPageDrawSVGElementOptions,
 ): SVGElementToDrawMap => {
   const selectColor = (c: { rgb: Color; cmyk: Color } | undefined) =>
-    options.colorMode === 'rgb' ? c?.rgb : c?.cmyk;
+    options.colorMode === 'cmyk' ? c?.cmyk : c?.rgb;
 
   return {
     async text(element) {

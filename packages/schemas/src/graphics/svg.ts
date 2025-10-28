@@ -94,12 +94,12 @@ const svgSchema: Plugin<SVGSchema> = {
     }
   },
   pdf: async (arg) => {
-    const { page, schema, value } = arg;
+    const { page, schema, value, options } = arg;
     if (!value || !isValidSVG(value)) return;
     const pageHeight = page.getHeight();
     const { width, height, position } = convertForPdfLayoutProps({ schema, pageHeight });
     const { x, y } = position;
-    await page.drawSvg(value, { x, y: y + height, width, height });
+    await page.drawSvg(value, { x, y: y + height, width, height, colorMode: options.colorType });
   },
   propPanel: {
     schema: {},
