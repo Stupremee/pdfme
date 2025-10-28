@@ -172,4 +172,5 @@ export interface PDFPageDrawSVGElementOptions {
   height?: number;
   fontSize?: number;
   fonts?: { [fontName: string]: PDFFont };
+  colorMode?: 'cmyk' | 'rgb';
 }

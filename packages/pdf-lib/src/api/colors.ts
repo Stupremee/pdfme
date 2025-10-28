@@ -1,3 +1,5 @@
+import ColorParser from 'color';
+import { assertIs, assertRange, error } from '../utils';
 import {
   setFillingCmykColor,
   setFillingGrayscaleColor,
@@ -6,8 +8,6 @@ import {
   setStrokingGrayscaleColor,
   setStrokingRgbColor,
 } from './operators';
-import { assertRange, assertIs, error } from '../utils';
-import ColorParser from 'color';
 
 export enum ColorTypes {
   Grayscale = 'Grayscale',
@@ -57,11 +57,15 @@ export const cmyk = (cyan: number, magenta: number, yellow: number, key: number)
   return { type: ColorTypes.CMYK, cyan, magenta, yellow, key };
 };
 
-export const colorString = (color: string): { rgb: Color; alpha?: number } => {
+export const colorString = (color: string): { rgb: Color; cmyk: Color; alpha?: number } => {
   assertIs(color, 'color', ['string']);
-  const colorDescription = ColorParser(color).unitObject();
+  const parsedColor = ColorParser(color);
+  const colorDescription = parsedColor.unitObject();
+  const cmykParts = parsedColor.cmyk().array();
+
   return {
     rgb: rgb(colorDescription.r, colorDescription.g, colorDescription.b),
+    cmyk: cmyk(cmykParts[0], cmykParts[1], cmykParts[2], cmykParts[3]),
     alpha: colorDescription.alpha,
   };
 };
@@ -69,41 +73,56 @@ export const colorString = (color: string): { rgb: Color; alpha?: number } => {
 const { Grayscale, RGB, CMYK } = ColorTypes;
 
 // prettier-ignore
-export const setFillingColor = (color: Color) => 
-    color.type === Grayscale ? setFillingGrayscaleColor(color.gray)
-  : color.type === RGB       ? setFillingRgbColor(color.red, color.green, color.blue)
-  : color.type === CMYK      ? setFillingCmykColor(color.cyan, color.magenta, color.yellow, color.key)
-  : error(`Invalid color: ${JSON.stringify(color)}`);
+export const setFillingColor = (color: Color) =>
+    color.type === Grayscale
+        ? setFillingGrayscaleColor(color.gray)
+        : color.type === RGB
+          ? setFillingRgbColor(color.red, color.green, color.blue)
+          : color.type === CMYK
+            ? setFillingCmykColor(
+                  color.cyan,
+                  color.magenta,
+                  color.yellow,
+                  color.key,
+              )
+            : error(`Invalid color: ${JSON.stringify(color)}`);
 
 // prettier-ignore
-export const setStrokingColor = (color: Color) => 
-    color.type === Grayscale ? setStrokingGrayscaleColor(color.gray)
-  : color.type === RGB       ? setStrokingRgbColor(color.red, color.green, color.blue)
-  : color.type === CMYK      ? setStrokingCmykColor(color.cyan, color.magenta, color.yellow, color.key)
-  : error(`Invalid color: ${JSON.stringify(color)}`);
+export const setStrokingColor = (color: Color) =>
+    color.type === Grayscale
+        ? setStrokingGrayscaleColor(color.gray)
+        : color.type === RGB
+          ? setStrokingRgbColor(color.red, color.green, color.blue)
+          : color.type === CMYK
+            ? setStrokingCmykColor(
+                  color.cyan,
+                  color.magenta,
+                  color.yellow,
+                  color.key,
+              )
+            : error(`Invalid color: ${JSON.stringify(color)}`);
 
 // prettier-ignore
-export const componentsToColor = (comps?: number[], scale = 1) => (
-    comps?.length === 1 ? grayscale(
-      comps[0] * scale,
-    )
-  : comps?.length === 3 ? rgb(
-      comps[0] * scale, 
-      comps[1] * scale, 
-      comps[2] * scale,
-    )
-  : comps?.length === 4 ? cmyk(
-      comps[0] * scale, 
-      comps[1] * scale, 
-      comps[2] * scale, 
-      comps[3] * scale,
-    )
-  : undefined
-);
+export const componentsToColor = (comps?: number[], scale = 1) =>
+    comps?.length === 1
+        ? grayscale(comps[0] * scale)
+        : comps?.length === 3
+          ? rgb(comps[0] * scale, comps[1] * scale, comps[2] * scale)
+          : comps?.length === 4
+            ? cmyk(
+                  comps[0] * scale,
+                  comps[1] * scale,
+                  comps[2] * scale,
+                  comps[3] * scale,
+              )
+            : undefined;
 
 // prettier-ignore
 export const colorToComponents = (color: Color) =>
-    color.type === Grayscale ? [color.gray]
-  : color.type === RGB       ? [color.red, color.green, color.blue]
-  : color.type === CMYK      ? [color.cyan, color.magenta, color.yellow, color.key]
-  : error(`Invalid color: ${JSON.stringify(color)}`);
+    color.type === Grayscale
+        ? [color.gray]
+        : color.type === RGB
+          ? [color.red, color.green, color.blue]
+          : color.type === CMYK
+            ? [color.cyan, color.magenta, color.yellow, color.key]
+            : error(`Invalid color: ${JSON.stringify(color)}`);

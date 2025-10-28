@@ -31,9 +31,9 @@ type SVGStyle = Record<string, string>;
 type InheritedAttributes = {
   width: number;
   height: number;
-  fill?: Color;
+  fill?: { rgb: Color; cmyk: Color };
   fillOpacity?: number;
-  stroke?: Color;
+  stroke?: { rgb: Color; cmyk: Color };
   strokeWidth?: number;
   strokeOpacity?: number;
   strokeLineCap?: LineCapStyle;
@@ -202,152 +202,157 @@ const StrokeLineJoinMap: Record<string, LineJoinStyle> = {
 const runnersToPage = (
   page: PDFPage,
   options: PDFPageDrawSVGElementOptions,
-): SVGElementToDrawMap => ({
-  async text(element) {
-    const anchor = element.svgAttributes.textAnchor;
-    const dominantBaseline = element.svgAttributes.dominantBaseline;
-    const text = element.text.trim().replace(/\s/g, ' ');
-    const fontSize = element.svgAttributes.fontSize || 12;
+): SVGElementToDrawMap => {
+  const selectColor = (c: { rgb: Color; cmyk: Color } | undefined) =>
+    options.colorMode === 'rgb' ? c?.rgb : c?.cmyk;
 
-    /** This will find the best font for the provided style in the list */
-    function getBestFont(style: InheritedAttributes, fonts: { [fontName: string]: PDFFont }) {
-      const family = style.fontFamily;
-      if (!family) return undefined;
-      const isBold = style.fontWeight === 'bold' || Number(style.fontWeight) >= 700;
-      const isItalic = style.fontStyle === 'italic';
-      const getFont = (bold: boolean, italic: boolean, family: string) =>
-        fonts[family + (bold ? '_bold' : '') + (italic ? '_italic' : '')];
-      return (
-        getFont(isBold, isItalic, family) ||
-        getFont(isBold, false, family) ||
-        getFont(false, isItalic, family) ||
-        getFont(false, false, family) ||
-        Object.keys(fonts).find((fontFamily) => fontFamily.startsWith(family))
+  return {
+    async text(element) {
+      const anchor = element.svgAttributes.textAnchor;
+      const dominantBaseline = element.svgAttributes.dominantBaseline;
+      const text = element.text.trim().replace(/\s/g, ' ');
+      const fontSize = element.svgAttributes.fontSize || 12;
+
+      /** This will find the best font for the provided style in the list */
+      function getBestFont(style: InheritedAttributes, fonts: { [fontName: string]: PDFFont }) {
+        const family = style.fontFamily;
+        if (!family) return undefined;
+        const isBold = style.fontWeight === 'bold' || Number(style.fontWeight) >= 700;
+        const isItalic = style.fontStyle === 'italic';
+        const getFont = (bold: boolean, italic: boolean, family: string) =>
+          fonts[family + (bold ? '_bold' : '') + (italic ? '_italic' : '')];
+        return (
+          getFont(isBold, isItalic, family) ||
+          getFont(isBold, false, family) ||
+          getFont(false, isItalic, family) ||
+          getFont(false, false, family) ||
+          Object.keys(fonts).find((fontFamily) => fontFamily.startsWith(family))
+        );
+      }
+
+      const font = options.fonts && getBestFont(element.svgAttributes, options.fonts);
+      const textWidth = (font || page.getFont()[0]).widthOfTextAtSize(text, fontSize);
+
+      const textHeight = (font || page.getFont()[0]).heightAtSize(fontSize);
+      const offsetX = anchor === 'middle' ? textWidth / 2 : anchor === 'end' ? textWidth : 0;
+
+      const offsetY =
+        dominantBaseline === 'text-before-edge'
+          ? textHeight
+          : dominantBaseline === 'text-after-edge'
+            ? -textHeight
+            : dominantBaseline === 'middle'
+              ? textHeight / 2
+              : 0;
+
+      page.drawText(text, {
+        x: -offsetX,
+        y: -offsetY,
+        font,
+        // TODO: the font size should be correctly scaled too
+        size: fontSize,
+        color: selectColor(element.svgAttributes.fill),
+        opacity: element.svgAttributes.fillOpacity,
+        matrix: element.svgAttributes.matrix,
+        clipSpaces: element.svgAttributes.clipSpaces,
+      });
+    },
+    async line(element) {
+      page.drawLine({
+        start: {
+          x: element.svgAttributes.x1 || 0,
+          y: -element.svgAttributes.y1! || 0,
+        },
+        end: {
+          x: element.svgAttributes.x2! || 0,
+          y: -element.svgAttributes.y2! || 0,
+        },
+        thickness: element.svgAttributes.strokeWidth,
+        color: selectColor(element.svgAttributes.stroke),
+        opacity: element.svgAttributes.strokeOpacity,
+        lineCap: element.svgAttributes.strokeLineCap,
+        matrix: element.svgAttributes.matrix,
+        clipSpaces: element.svgAttributes.clipSpaces,
+      });
+    },
+    async path(element) {
+      if (!element.svgAttributes.d) return;
+      // See https://jsbin.com/kawifomupa/edit?html,output and
+      page.drawSvgPath(element.svgAttributes.d, {
+        x: 0,
+        y: 0,
+        borderColor: selectColor(element.svgAttributes.stroke),
+        borderWidth: element.svgAttributes.strokeWidth,
+        borderOpacity: element.svgAttributes.strokeOpacity,
+        borderLineCap: element.svgAttributes.strokeLineCap,
+        color: selectColor(element.svgAttributes.fill),
+        opacity: element.svgAttributes.fillOpacity,
+        fillRule: element.svgAttributes.fillRule,
+        matrix: element.svgAttributes.matrix,
+        clipSpaces: element.svgAttributes.clipSpaces,
+      });
+    },
+    async image(element) {
+      const { src } = element.svgAttributes;
+      if (!src) return;
+      const isPng = src.match(/\.png(\?|$)|^data:image\/png;base64/gim);
+      const img = isPng ? await page.doc.embedPng(src) : await page.doc.embedJpg(src);
+
+      const { x, y, width, height } = getFittingRectangle(
+        img.width,
+        img.height,
+        element.svgAttributes.width || img.width,
+        element.svgAttributes.height || img.height,
+        element.svgAttributes.preserveAspectRatio,
       );
-    }
-
-    const font = options.fonts && getBestFont(element.svgAttributes, options.fonts);
-    const textWidth = (font || page.getFont()[0]).widthOfTextAtSize(text, fontSize);
-
-    const textHeight = (font || page.getFont()[0]).heightAtSize(fontSize);
-    const offsetX = anchor === 'middle' ? textWidth / 2 : anchor === 'end' ? textWidth : 0;
-
-    const offsetY =
-      dominantBaseline === 'text-before-edge'
-        ? textHeight
-        : dominantBaseline === 'text-after-edge'
-          ? -textHeight
-          : dominantBaseline === 'middle'
-            ? textHeight / 2
-            : 0;
-
-    page.drawText(text, {
-      x: -offsetX,
-      y: -offsetY,
-      font,
-      // TODO: the font size should be correctly scaled too
-      size: fontSize,
-      color: element.svgAttributes.fill,
-      opacity: element.svgAttributes.fillOpacity,
-      matrix: element.svgAttributes.matrix,
-      clipSpaces: element.svgAttributes.clipSpaces,
-    });
-  },
-  async line(element) {
-    page.drawLine({
-      start: {
-        x: element.svgAttributes.x1 || 0,
-        y: -element.svgAttributes.y1! || 0,
-      },
-      end: {
-        x: element.svgAttributes.x2! || 0,
-        y: -element.svgAttributes.y2! || 0,
-      },
-      thickness: element.svgAttributes.strokeWidth,
-      color: element.svgAttributes.stroke,
-      opacity: element.svgAttributes.strokeOpacity,
-      lineCap: element.svgAttributes.strokeLineCap,
-      matrix: element.svgAttributes.matrix,
-      clipSpaces: element.svgAttributes.clipSpaces,
-    });
-  },
-  async path(element) {
-    if (!element.svgAttributes.d) return;
-    // See https://jsbin.com/kawifomupa/edit?html,output and
-    page.drawSvgPath(element.svgAttributes.d, {
-      x: 0,
-      y: 0,
-      borderColor: element.svgAttributes.stroke,
-      borderWidth: element.svgAttributes.strokeWidth,
-      borderOpacity: element.svgAttributes.strokeOpacity,
-      borderLineCap: element.svgAttributes.strokeLineCap,
-      color: element.svgAttributes.fill,
-      opacity: element.svgAttributes.fillOpacity,
-      fillRule: element.svgAttributes.fillRule,
-      matrix: element.svgAttributes.matrix,
-      clipSpaces: element.svgAttributes.clipSpaces,
-    });
-  },
-  async image(element) {
-    const { src } = element.svgAttributes;
-    if (!src) return;
-    const isPng = src.match(/\.png(\?|$)|^data:image\/png;base64/gim);
-    const img = isPng ? await page.doc.embedPng(src) : await page.doc.embedJpg(src);
-
-    const { x, y, width, height } = getFittingRectangle(
-      img.width,
-      img.height,
-      element.svgAttributes.width || img.width,
-      element.svgAttributes.height || img.height,
-      element.svgAttributes.preserveAspectRatio,
-    );
-    page.drawImage(img, {
-      x,
-      y: -y - height,
-      width,
-      height,
-      opacity: element.svgAttributes.fillOpacity,
-      matrix: element.svgAttributes.matrix,
-      clipSpaces: element.svgAttributes.clipSpaces,
-    });
-  },
-  async rect(element) {
-    if (!element.svgAttributes.fill && !element.svgAttributes.stroke) return;
-    page.drawRectangle({
-      x: 0,
-      y: 0,
-      width: element.svgAttributes.width,
-      height: element.svgAttributes.height * -1,
-      borderColor: element.svgAttributes.stroke,
-      borderWidth: element.svgAttributes.strokeWidth,
-      borderOpacity: element.svgAttributes.strokeOpacity,
-      borderLineCap: element.svgAttributes.strokeLineCap,
-      color: element.svgAttributes.fill,
-      opacity: element.svgAttributes.fillOpacity,
-      matrix: element.svgAttributes.matrix,
-      clipSpaces: element.svgAttributes.clipSpaces,
-    });
-  },
-  async ellipse(element) {
-    page.drawEllipse({
-      x: element.svgAttributes.cx || 0,
-      y: -(element.svgAttributes.cy || 0),
-      xScale: element.svgAttributes.rx,
-      yScale: element.svgAttributes.ry,
-      borderColor: element.svgAttributes.stroke,
-      borderWidth: element.svgAttributes.strokeWidth,
-      borderOpacity: element.svgAttributes.strokeOpacity,
-      borderLineCap: element.svgAttributes.strokeLineCap,
-      color: element.svgAttributes.fill,
-      opacity: element.svgAttributes.fillOpacity,
-      matrix: element.svgAttributes.matrix,
-      clipSpaces: element.svgAttributes.clipSpaces,
-    });
-  },
-  async circle(element) {
-    return runnersToPage(page, options).ellipse(element);
-  },
-});
+      page.drawImage(img, {
+        x,
+        y: -y - height,
+        width,
+        height,
+        opacity: element.svgAttributes.fillOpacity,
+        matrix: element.svgAttributes.matrix,
+        clipSpaces: element.svgAttributes.clipSpaces,
+      });
+    },
+    async rect(element) {
+      if (!element.svgAttributes.fill && !element.svgAttributes.stroke) return;
+      page.drawRectangle({
+        x: 0,
+        y: 0,
+        width: element.svgAttributes.width,
+        height: element.svgAttributes.height * -1,
+        borderColor: selectColor(element.svgAttributes.stroke),
+        borderWidth: element.svgAttributes.strokeWidth,
+        borderOpacity: element.svgAttributes.strokeOpacity,
+        borderLineCap: element.svgAttributes.strokeLineCap,
+        color: selectColor(element.svgAttributes.fill),
+        opacity: element.svgAttributes.fillOpacity,
+        matrix: element.svgAttributes.matrix,
+        clipSpaces: element.svgAttributes.clipSpaces,
+      });
+    },
+    async ellipse(element) {
+      page.drawEllipse({
+        x: element.svgAttributes.cx || 0,
+        y: -(element.svgAttributes.cy || 0),
+        xScale: element.svgAttributes.rx,
+        yScale: element.svgAttributes.ry,
+        borderColor: selectColor(element.svgAttributes.stroke),
+        borderWidth: element.svgAttributes.strokeWidth,
+        borderOpacity: element.svgAttributes.strokeOpacity,
+        borderLineCap: element.svgAttributes.strokeLineCap,
+        color: selectColor(element.svgAttributes.fill),
+        opacity: element.svgAttributes.fillOpacity,
+        matrix: element.svgAttributes.matrix,
+        clipSpaces: element.svgAttributes.clipSpaces,
+      });
+    },
+    async circle(element) {
+      return runnersToPage(page, options).ellipse(element);
+    },
+  };
+};
 
 const styleOrAttribute = (
   attributes: Attributes,
@@ -373,14 +378,15 @@ const parseStyles = (style: string): SVGStyle => {
 
 const parseColor = (
   color: string,
-  inherited?: { rgb: Color; alpha?: string },
-): { rgb: Color; alpha?: string } | undefined => {
+  inherited?: { rgb: Color; cmyk: Color; alpha?: string },
+): { rgb: Color; cmyk: Color; alpha?: string } | undefined => {
   if (!color || color.length === 0) return undefined;
   if (['none', 'transparent'].includes(color)) return undefined;
   if (color === 'currentColor') return inherited || parseColor('#000000');
   const parsedColor = colorString(color);
   return {
     rgb: parsedColor.rgb,
+    cmyk: parsedColor.cmyk,
     alpha: parsedColor.alpha ? parsedColor.alpha + '' : undefined,
   };
 };
@@ -433,11 +439,11 @@ const parseAttributes = (
     fontStyle: fontStyleRaw || inherited.fontStyle,
     fontWeight: fontWeightRaw || inherited.fontWeight,
     fontSize: parseFloatValue(fontSizeRaw) ?? inherited.fontSize,
-    fill: fillRaw?.rgb || inherited.fill,
+    fill: fillRaw || inherited.fill,
     fillOpacity:
       parseFloatValue(fillOpacityRaw || opacityRaw || fillRaw?.alpha) ?? inherited.fillOpacity,
     fillRule: FillRuleMap[fillRuleRaw] || inherited.fillRule,
-    stroke: strokeRaw?.rgb || inherited.stroke,
+    stroke: strokeRaw || inherited.stroke,
     strokeWidth: parseFloatValue(strokeWidthRaw) ?? inherited.strokeWidth,
     strokeOpacity:
       parseFloatValue(strokeOpacityRaw || opacityRaw || strokeRaw?.alpha) ??
