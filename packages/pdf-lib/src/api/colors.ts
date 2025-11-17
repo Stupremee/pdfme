@@ -1,73 +1,85 @@
-import ColorParser from 'color';
-import { assertIs, assertRange, error } from '../utils';
+import ColorParser from "color";
+import { assertIs, assertRange, error } from "../utils";
 import {
-  setFillingCmykColor,
-  setFillingGrayscaleColor,
-  setFillingRgbColor,
-  setStrokingCmykColor,
-  setStrokingGrayscaleColor,
-  setStrokingRgbColor,
-} from './operators';
+    setFillingCmykColor,
+    setFillingGrayscaleColor,
+    setFillingRgbColor,
+    setStrokingCmykColor,
+    setStrokingGrayscaleColor,
+    setStrokingRgbColor,
+} from "./operators";
 
 export enum ColorTypes {
-  Grayscale = 'Grayscale',
-  RGB = 'RGB',
-  CMYK = 'CMYK',
+    Grayscale = "Grayscale",
+    RGB = "RGB",
+    CMYK = "CMYK",
 }
 
 export interface Grayscale {
-  type: ColorTypes.Grayscale;
-  gray: number;
+    type: ColorTypes.Grayscale;
+    gray: number;
 }
 
 export interface RGB {
-  type: ColorTypes.RGB;
-  red: number;
-  green: number;
-  blue: number;
+    type: ColorTypes.RGB;
+    red: number;
+    green: number;
+    blue: number;
 }
 
 export interface CMYK {
-  type: ColorTypes.CMYK;
-  cyan: number;
-  magenta: number;
-  yellow: number;
-  key: number;
+    type: ColorTypes.CMYK;
+    cyan: number;
+    magenta: number;
+    yellow: number;
+    key: number;
 }
 
 export type Color = Grayscale | RGB | CMYK;
 
 export const grayscale = (gray: number): Grayscale => {
-  assertRange(gray, 'gray', 0.0, 1.0);
-  return { type: ColorTypes.Grayscale, gray };
+    assertRange(gray, "gray", 0.0, 1.0);
+    return { type: ColorTypes.Grayscale, gray };
 };
 
 export const rgb = (red: number, green: number, blue: number): RGB => {
-  assertRange(red, 'red', 0, 1);
-  assertRange(green, 'green', 0, 1);
-  assertRange(blue, 'blue', 0, 1);
-  return { type: ColorTypes.RGB, red, green, blue };
+    assertRange(red, "red", 0, 1);
+    assertRange(green, "green", 0, 1);
+    assertRange(blue, "blue", 0, 1);
+    return { type: ColorTypes.RGB, red, green, blue };
 };
 
-export const cmyk = (cyan: number, magenta: number, yellow: number, key: number): CMYK => {
-  assertRange(cyan, 'cyan', 0, 1);
-  assertRange(magenta, 'magenta', 0, 1);
-  assertRange(yellow, 'yellow', 0, 1);
-  assertRange(key, 'key', 0, 1);
-  return { type: ColorTypes.CMYK, cyan, magenta, yellow, key };
+export const cmyk = (
+    cyan: number,
+    magenta: number,
+    yellow: number,
+    key: number,
+): CMYK => {
+    assertRange(cyan, "cyan", 0, 1);
+    assertRange(magenta, "magenta", 0, 1);
+    assertRange(yellow, "yellow", 0, 1);
+    assertRange(key, "key", 0, 1);
+    return { type: ColorTypes.CMYK, cyan, magenta, yellow, key };
 };
 
-export const colorString = (color: string): { rgb: Color; cmyk: Color; alpha?: number } => {
-  assertIs(color, 'color', ['string']);
-  const parsedColor = ColorParser(color);
-  const colorDescription = parsedColor.unitObject();
-  const cmykParts = parsedColor.cmyk().array();
+export const colorString = (
+    color: string,
+): { rgb: Color; cmyk: Color; alpha?: number } => {
+    assertIs(color, "color", ["string"]);
+    const parsedColor = ColorParser(color);
+    const colorDescription = parsedColor.unitObject();
+    const cmykParts = parsedColor.cmyk().array();
 
-  return {
-    rgb: rgb(colorDescription.r, colorDescription.g, colorDescription.b),
-    cmyk: cmyk(cmykParts[0], cmykParts[1], cmykParts[2], cmykParts[3]),
-    alpha: colorDescription.alpha,
-  };
+    return {
+        rgb: rgb(colorDescription.r, colorDescription.g, colorDescription.b),
+        cmyk: cmyk(
+            cmykParts[0] / 100,
+            cmykParts[1] / 100,
+            cmykParts[2] / 100,
+            cmykParts[3] / 100,
+        ),
+        alpha: colorDescription.alpha,
+    };
 };
 
 const { Grayscale, RGB, CMYK } = ColorTypes;
